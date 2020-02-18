@@ -12,7 +12,9 @@ const MemesService = {
     return knex.from("memes_tables AS m").select("*");
   },
 
-  insertMemes(knex, newMemes) {},
+  insertMemes(knex, newMemes) {
+    //inser memes here
+  },
 
   getMemesById(knex, memesId) {
     return knex
