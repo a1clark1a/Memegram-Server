@@ -7,13 +7,21 @@ const userFields = [
   "usr.date_created AS user:date_created"
 ];
 
+//CRUD SERVICE FOR MEMES REQUESTS
+
 const MemesService = {
   getAllMemes(knex) {
     return knex.from("memes_tables AS m").select("*");
   },
 
   insertMemes(knex, newMemes) {
-    //inser memes here
+    return knex
+      .insert(newMemes)
+      .into("memes_tables")
+      .returning("*")
+      .then(rows => {
+        return rows[0];
+      });
   },
 
   getMemesById(knex, memesId) {
@@ -22,6 +30,13 @@ const MemesService = {
       .select("*")
       .where("id", memesId)
       .first();
+  },
+
+  getCommentsForClickedMeme(knex, memesId) {
+    return knex
+      .from("memes_comments AS com")
+      .select("*")
+      .where("com.memes_id", memesId);
   },
 
   deleteMemes(knex, memesId) {},
@@ -35,7 +50,16 @@ const MemesService = {
       user_id: memes.user_id,
       upvote_count: Number(memes.upvote_count) || 0,
       downvote_count: Number(memes.downvote_count) || 0,
-      date_created: new Date(memes.date_created)
+      date_created: new Date(memes.date_created).toLocaleString()
+    };
+  },
+  sanitizedComments(comment) {
+    return {
+      id: comment.id,
+      comment: xss(comment.comment),
+      date_created: new Date(comment.date_created).toLocaleString(),
+      memes_id: comment.memes_id,
+      user_id: comment.user_id
     };
   }
 };

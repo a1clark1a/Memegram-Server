@@ -23,7 +23,7 @@ describe("Memes Endpoints", () => {
 
   before("clean the table", () => helpers.cleanTables(db));
 
-  //afterEach("clean the table", () => helpers.cleanTables(db));
+  afterEach("clean the table", () => helpers.cleanTables(db));
 
   describe(`GET /api/memes`, () => {
     context(`Given no memes`, () => {

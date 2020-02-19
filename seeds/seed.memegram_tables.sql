@@ -8,9 +8,9 @@ RESTART IDENTITY CASCADE;
 
 INSERT INTO memes_users (user_name, full_name, password)
 VALUES
-('a1clark1a', 'Anthony Clark Perfecto', 'password'),
-('Demo', 'Demo Name', 'demopass'),
-('memer', 'Memo Lemo', 'memopass');
+('a1clark1a', 'Anthony Clark Perfecto', '$2a$12$B3VpZD1c4EE6u2QJ7Fmys.T6E4muzEYVcD.h2bXlXMhDp8nl9cylK'), 
+('Demo', 'Demo Name', '$2a$12$qsdsDEuidFUTGbPWHN29O.QKiLuxovKMDOh4gpe8V.IxJqkxiYuKC'),
+('memer', 'Memo Lemo', '$2a$12$9eZgd3XXb2ylDYncMCZXu.v.s7Q2FdBhTM/IXOyTZAvsqBpjOz/r.');
 
 
 INSERT INTO memes_tables (title, description, url, upvote_count, downvote_count, user_id )

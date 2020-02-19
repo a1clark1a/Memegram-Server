@@ -5,5 +5,6 @@ module.exports = {
     process.env.DATABASE_URL || "postgresql://ac_perfecto@localhost/memegram",
   TEST_DATABASE_URL:
     process.env.TEST_DATABASE_URL ||
-    "postgresql://ac_perfecto@localhost/memegram-test"
+    "postgresql://ac_perfecto@localhost/memegram-test",
+  JWT_SECRET: process.env.JWT_SECRET || "secret-to-change"
 };

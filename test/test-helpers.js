@@ -1,4 +1,6 @@
 const knex = require("knex");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 //TODO make test memes table
 
@@ -73,21 +75,21 @@ function makeUsersArray() {
       id: 1,
       user_name: "test-user-1",
       full_name: "test-full-name-1",
-      password: "passwprd",
+      password: "password",
       date_created: new Date("2029-01-22T16:28:32.615Z")
     },
     {
       id: 2,
       user_name: "test-user-2",
       full_name: "test-full-name-2",
-      password: "passwprd",
+      password: "password",
       date_created: new Date("2029-01-22T16:28:32.615Z")
     },
     {
       id: 3,
       user_name: "test-user-3",
       full_name: "test-full-name-3",
-      password: "passwprd",
+      password: "password",
       date_created: new Date("2029-01-22T16:28:32.615Z")
     }
   ];
@@ -160,7 +162,7 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 250,
       downvote_count: 10,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
     },
     {
       id: 2,
@@ -170,7 +172,7 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 150,
       downvote_count: 20,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
     },
     {
       id: 3,
@@ -180,7 +182,7 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 230,
       downvote_count: 30,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
     },
     {
       id: 4,
@@ -190,7 +192,7 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 450,
       downvote_count: 40,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
     },
     {
       id: 5,
@@ -200,7 +202,7 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 50,
       downvote_count: 50,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
     },
     {
       id: 6,
@@ -210,7 +212,7 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 60,
       downvote_count: 610,
-      date_created: "2029-01-22T16:28:32.615Z"
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
     }
   ];
 }
@@ -283,7 +285,8 @@ function makeExpectedUsersArray() {
 
 function seedUsers(db, users) {
   const preppedUsers = users.map(user => ({
-    ...user
+    ...user,
+    password: bcrypt.hashSync(user.password, 1)
   }));
   return db
     .into("memes_users")
@@ -311,6 +314,14 @@ function makeKnexInstance() {
     client: "pg",
     connection: process.env.TEST_DATABASE_URL
   }));
+}
+
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+  const token = jwt.sign({ user_id: user.id }, secret, {
+    subject: user.user_name,
+    algorithm: "HS256"
+  });
+  return `Bearer ${token}`;
 }
 
 function cleanTables(db) {
