@@ -3,6 +3,10 @@ const bcrypt = require("bcryptjs");
 const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
 
 const UsersService = {
+  getAllMemesByUserId(knex, userId) {
+    //TODO GET ALL MEMES WITH USERID
+  },
+
   hasUserWithUserName(knex, user_name) {
     return knex("memes_users")
       .where({ user_name })

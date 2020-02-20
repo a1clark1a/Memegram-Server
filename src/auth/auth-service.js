@@ -3,13 +3,12 @@ const jwt = require("jsonwebtoken");
 const config = require("../config");
 
 const AuthService = {
-  getUserWithUserName(db, user_name) {
-    return db("memes_users")
+  getUserWithUserName(knex, user_name) {
+    return knex("memes_users")
       .where({ user_name })
       .first();
   },
   comparePassword(password, hash) {
-    //TODO do a bcrypt compare here
     return bcrypt.compare(password, hash);
   },
   createJwt(subject, payload) {

@@ -14,6 +14,7 @@ usersRouter.route("/").get((req, res, next) => {
 
   //TODO FOR USERs
   //GET A USER BY ID
+  //THEN GET ALL MEMES BY USERID
 
   res.send("all the users");
 });

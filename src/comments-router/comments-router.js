@@ -8,12 +8,14 @@ const commentsRouter = express.Router();
 const jsonBodyParser = express.json();
 
 commentsRouter.route("/").get(requireAuth, (req, res, next) => {
+  //TODO FOR ADMIN
+  //GET ALL COMMENTS
   res.send("all the comments");
 });
 
 //API CALL FOR MAKING A COMMENT
 commentsRouter
-  .route("/:comments_id")
+  .route("/")
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
     const knexInstance = req.app.get("db");
     const { memes_id, comment } = req.body;
@@ -27,16 +29,16 @@ commentsRouter
           error: { message: `Missing '${key}' in request body` }
         });
       }
-      newComment.user_id = req.user.id;
-      CommentsService.insertComments(knexInstance, newComment)
-        .then(comment => {
-          res
-            .status(201)
-            .location(path.posix.join(req.originalUrl, `/${comment.id}`))
-            .json(CommentsService.sanitizeComment(comment));
-        })
-        .catch(next);
     }
+    newComment.user_id = req.user.id;
+    CommentsService.insertComments(knexInstance, newComment)
+      .then(comment => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${comment.id}`))
+          .json(CommentsService.sanitizeComment(comment));
+      })
+      .catch(next);
 
     //TODO GET
     //TODO DELETE

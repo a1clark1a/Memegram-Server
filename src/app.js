@@ -19,9 +19,9 @@ app.use(helmet());
 app.use(cors());
 
 app.use("/api/memes", memesRouter);
+app.use("/api/comments", commentsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/comments", commentsRouter);
 
 app.use(errorHandler);
 

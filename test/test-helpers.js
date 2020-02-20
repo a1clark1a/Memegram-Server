@@ -310,10 +310,10 @@ function seedMemesTables(db, users, memes, comments = []) {
 }
 
 function makeKnexInstance() {
-  return (db = knex({
+  return knex({
     client: "pg",
     connection: process.env.TEST_DATABASE_URL
-  }));
+  });
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
@@ -348,6 +348,7 @@ module.exports = {
 
   makeExpectedTestData,
   makeTestData,
+  makeAuthHeader,
 
   seedUsers,
   seedMemesTables

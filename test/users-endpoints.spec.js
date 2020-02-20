@@ -1,8 +1,9 @@
 const app = require("../src/app");
 const helpers = require("./test-helpers");
 const bcrypt = require("bcryptjs");
+const logger = require("../src/logger/logger");
 
-describe.only("Users Endpoints", function() {
+describe("Users Endpoints", function() {
   let db;
   const { testUsers } = helpers.makeTestData();
   const testUser = testUsers[0];

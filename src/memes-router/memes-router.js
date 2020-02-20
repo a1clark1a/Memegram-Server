@@ -39,10 +39,46 @@ memesRouter
   })
   .get((req, res, next) => {
     res.json(MemesService.sanitizedMemes(res.memes));
+  })
+  .patch(jsonBodyParser, (req, res, next) => {
+    const knexInstance = req.app.get("db");
+    const { title, upvote_count, downvote_count, url, description } = req.body;
+    const updatedMeme = {
+      title,
+      upvote_count,
+      downvote_count,
+      url,
+      description
+    };
+    const { memes_id } = req.params;
+
+    const numberOfReqBodyVal = Object.values(updatedMeme).filter(Boolean)
+      .length;
+    if (numberOfReqBodyVal === 0) {
+      logger.error("Patch request is missing at least one field");
+      return res.status(400).json({
+        error: {
+          message: `Request body must contain either a title, upvote_count, downvote_count, url or description`
+        }
+      });
+    }
+    MemesService.updateMeme(knexInstance, memes_id, updatedMeme)
+      .then(updated => {
+        if (!updated) {
+          logger.error("updating went wrong");
+          return res.status(400).json({
+            error: { message: "Bad Request" }
+          });
+        }
+        logger.info(
+          `Successfully added an upvote on the meme with ${memes_id} id`
+        );
+        res.status(204).end();
+      })
+      .catch(next);
   });
 
 //TODO DELETE
-//TODO PATCH
 
 //API CALL FOR COMMENTS FOR EACH MEMES
 memesRouter.route("/:memes_id/comments").get((req, res, next) => {

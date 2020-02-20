@@ -7,7 +7,7 @@ const CommentsService = {
       .insert(newComments)
       .returning("*")
       .then(([comment]) => comment)
-      .then(comment => CommentsService.getCommentsById(knex, comment, id));
+      .then(comment => CommentsService.getCommentsById(knex, comment.id));
   },
 
   getCommentsById(knex, commentsId) {
