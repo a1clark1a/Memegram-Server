@@ -42,13 +42,21 @@ memesRouter
   })
   .patch(jsonBodyParser, (req, res, next) => {
     const knexInstance = req.app.get("db");
-    const { title, upvote_count, downvote_count, url, description } = req.body;
+    const {
+      title,
+      upvote_count,
+      downvote_count,
+      url,
+      description,
+      user_id
+    } = req.body;
     const updatedMeme = {
       title,
       upvote_count,
       downvote_count,
       url,
-      description
+      description,
+      user_id
     };
     const { memes_id } = req.params;
 
@@ -63,8 +71,8 @@ memesRouter
       });
     }
     MemesService.updateMeme(knexInstance, memes_id, updatedMeme)
-      .then(updated => {
-        if (!updated) {
+      .then(updatedRows => {
+        if (!updatedRows) {
           logger.error("updating went wrong");
           return res.status(400).json({
             error: { message: "Bad Request" }
@@ -86,6 +94,7 @@ memesRouter.route("/:memes_id/comments").get((req, res, next) => {
   const { memes_id } = req.params;
   MemesService.getCommentsForClickedMeme(knexInstance, memes_id)
     .then(comments => {
+      logger.info("Comments retrieved");
       res.json(comments.map(MemesService.sanitizedComments));
     })
     .catch(next);

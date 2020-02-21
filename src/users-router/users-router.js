@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const logger = require("../logger/logger");
 const UsersService = require("./users-service");
+const AuthService = require("../auth/auth-service");
+const MemesService = require("../memes-router/memes-service");
 
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -17,6 +19,39 @@ usersRouter.route("/").get((req, res, next) => {
   //THEN GET ALL MEMES BY USERID
 
   res.send("all the users");
+});
+
+usersRouter
+  .route("/:user_name")
+  .all((req, res, next) => {
+    const knexInstance = req.app.get("db");
+    const { user_name } = req.params;
+    AuthService.getUserWithUserName(knexInstance, user_name)
+      .then(users => {
+        if (!users) {
+          logger.error(`Failed getting user on route /:user_name`);
+          return res.status(404).json({
+            error: { message: `User does not exist` }
+          });
+        }
+        res.users = users;
+        next();
+      })
+      .catch(next);
+  })
+  .get((req, res, next) => {
+    res.json(UsersService.sanitizeUser(res.users));
+  });
+
+usersRouter.route("/:user_id/memes").get((req, res, next) => {
+  const knexInstance = req.app.get("db");
+  const { user_id } = req.params;
+  UsersService.getAllMemesUploadedByUserId(knexInstance, user_id)
+    .then(memes => {
+      logger.info("memes retrieved");
+      res.json(memes.map(MemesService.sanitizedMemes));
+    })
+    .catch(next);
 });
 
 //API CALL FOR REGISTERING A NEW USER
@@ -39,7 +74,7 @@ usersRouter.post("/", jsonBodyParser, (req, res, next) => {
   if (passwordError) {
     logger.error(passwordError);
     return res.status(400).json({
-      error: { passwordError }
+      error: { message: passwordError }
     });
   }
 
