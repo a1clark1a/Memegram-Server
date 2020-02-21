@@ -16,7 +16,6 @@ usersRouter.route("/").get((req, res, next) => {
 
   //TODO FOR USERs
   //GET A USER BY ID
-  //THEN GET ALL MEMES BY USERID
 
   res.send("all the users");
 });
@@ -26,6 +25,7 @@ usersRouter
   .all((req, res, next) => {
     const knexInstance = req.app.get("db");
     const { user_name } = req.params;
+    //THEN GET ALL MEMES BY USERID
     AuthService.getUserWithUserName(knexInstance, user_name)
       .then(users => {
         if (!users) {

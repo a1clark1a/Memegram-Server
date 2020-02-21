@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const logger = require("../logger/logger");
 const MemesService = require("./memes-service");
+const UsersService = require("../users-router/users-service");
 
 const memesRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -96,6 +97,18 @@ memesRouter.route("/:memes_id/comments").get((req, res, next) => {
     .then(comments => {
       logger.info("Comments retrieved");
       res.json(comments.map(MemesService.sanitizedComments));
+    })
+    .catch(next);
+});
+
+//API CALL FOR A USER FOR EACH MEMES
+memesRouter.route("/:user_id/users").get((req, res, next) => {
+  const knexInstance = req.app.get("db");
+  const { user_id } = req.params;
+  UsersService.getUserById(knexInstance, user_id)
+    .then(user => {
+      logger.info("User retreived");
+      res.json(UsersService.sanitizeUser(user));
     })
     .catch(next);
 });

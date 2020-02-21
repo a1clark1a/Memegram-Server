@@ -57,6 +57,8 @@ const UsersService = {
       id: user.id,
       full_name: xss(user.full_name),
       user_name: xss(user.user_name),
+      about: xss(user.about),
+      profile_pic: xss(user.profile_pic),
       date_created: new Date(user.date_created).toLocaleString()
     };
   }

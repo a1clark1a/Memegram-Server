@@ -39,6 +39,13 @@ const MemesService = {
       .where("com.memes_id", memesId);
   },
 
+  getMemesPoster(knex, userId) {
+    return knex
+      .from("memes_user")
+      .where("id", userId)
+      .first();
+  },
+
   updateMeme(knex, memesid, memesToUpdate) {
     return knex("memes_tables")
       .where("id", memesid)
