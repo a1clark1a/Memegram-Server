@@ -23,7 +23,7 @@ describe("Memes Endpoints", () => {
 
   before("clean the table", () => helpers.cleanTables(db));
 
-  //afterEach("clean the table", () => helpers.cleanTables(db));
+  afterEach("clean the table", () => helpers.cleanTables(db));
 
   describe(`GET /api/memes`, () => {
     context(`Given no memes`, () => {
@@ -44,6 +44,13 @@ describe("Memes Endpoints", () => {
           .get("/api/memes")
           .expect(200, expectedMemes);
       });
+
+      //TODO XSS TEST
+      //TODO EDGE CASE TESTS
     });
   });
+
+  //TODO POST TEST SUITE
+  //TODO XSS TEST
+  //TOODO EDGE CASE TESTS
 });

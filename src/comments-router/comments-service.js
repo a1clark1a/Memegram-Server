@@ -1,11 +1,38 @@
+const xss = require("xss");
+
 const CommentsService = {
-  getAllComments(knex) {},
+  insertComments(knex, newComments) {
+    return knex
+      .into("memes_comments")
+      .insert(newComments)
+      .returning("*")
+      .then(([comment]) => comment)
+      .then(comment => CommentsService.getCommentsById(knex, comment.id));
+  },
 
-  insertComments(knex, newComments) {},
+  getCommentsById(knex, commentsId) {
+    return knex
+      .from("memes_comments AS com")
+      .select("*")
+      .where("com.id", commentsId)
+      .first();
+  },
 
-  getCommentsById(knex, commentsId) {},
+  deleteComments(knex, commentsId) {
+    return knex("memes_comments")
+      .where({ commentsId })
+      .delete();
+  },
 
-  deleteComments(knex, commentsId) {}
+  sanitizeComment(comment) {
+    return {
+      id: comment.id,
+      comment: xss(comment.comment),
+      date_created: new Date(comment.date_created).toLocaleString(),
+      memes_id: comment.memes_id,
+      user_id: comment.user_id
+    };
+  }
 };
 
 module.exports = CommentsService;

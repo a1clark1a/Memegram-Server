@@ -3,6 +3,8 @@ CREATE TABLE memes_users (
     user_name TEXT NOT NULL UNIQUE,
     full_name TEXT NOT NULL,
     password TEXT NOT NULL,
+    profile_pic TEXT,
+    about TEXT,
     date_created TIMESTAMP NOT NULL DEFAULT now()
 
 );
