@@ -11,7 +11,10 @@ const userFields = [
 
 const MemesService = {
   getAllMemes(knex) {
-    return knex.from("memes_tables AS m").select("*");
+    return knex
+      .from("memes_tables AS m")
+      .select("*")
+      .orderBy("date_created", "desc");
   },
 
   insertMemes(knex, newMemes) {
@@ -41,7 +44,7 @@ const MemesService = {
 
   getMemesPoster(knex, userId) {
     return knex
-      .from("memes_user")
+      .from("memes_users")
       .where("id", userId)
       .first();
   },

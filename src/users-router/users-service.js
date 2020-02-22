@@ -14,7 +14,8 @@ const UsersService = {
     return knex
       .from("memes_tables")
       .select("*")
-      .where("user_id", userId);
+      .where("user_id", userId)
+      .orderBy("date_created", "desc");
   },
 
   hasUserWithUserName(knex, user_name) {

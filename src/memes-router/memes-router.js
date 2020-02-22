@@ -8,16 +8,51 @@ const memesRouter = express.Router();
 const jsonBodyParser = express.json();
 
 //API CALL FOR A LIST OF ALL MEMES
-memesRouter.route("/").get((req, res, next) => {
-  const knexInstance = req.app.get("db");
-  MemesService.getAllMemes(knexInstance)
-    .then(memes => {
-      logger.info(`all memes requested`);
-      res.json(memes.map(MemesService.sanitizedMemes));
-    })
-    .catch(next);
-  //TODO POST
-});
+memesRouter
+  .route("/")
+  .get((req, res, next) => {
+    const knexInstance = req.app.get("db");
+    MemesService.getAllMemes(knexInstance)
+      .then(memes => {
+        logger.info(`all memes requested`);
+        res.json(memes.map(MemesService.sanitizedMemes));
+      })
+      .catch(next);
+    //TODO POST
+  })
+  .post(jsonBodyParser, (req, res, next) => {
+    const { title, description, user_id, url } = req.body;
+    const newMeme = { title, description, user_id, url };
+    const knexInstance = req.app.get("db");
+
+    for (const [key, value] of Object.entries(newMeme)) {
+      if (value == null) {
+        logger.error(`Missing ${key} in request body`);
+        return res.status(400).json({
+          error: {
+            message: `Request body must have a title, description, user_id and url`
+          }
+        });
+      }
+    }
+
+    newMeme.upvote_count = 0;
+    newMeme.downvote_count = 0;
+    MemesService.insertMemes(knexInstance, newMeme)
+      .then(meme => {
+        if (!meme) {
+          logger.error("Error inserting meme");
+        }
+        logger.info(
+          `Meme with uploaded by user with user.id ${meme.user_id} successfully uploaded`
+        );
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${meme.id}`))
+          .json(MemesService.sanitizedMemes(meme));
+      })
+      .catch(next);
+  });
 
 //API CALL FOR A SINGLE MEME
 memesRouter
@@ -82,7 +117,7 @@ memesRouter
         logger.info(
           `Successfully added an upvote on the meme with ${memes_id} id`
         );
-        res.status(204).end();
+        res.status(204);
       })
       .catch(next);
   });
