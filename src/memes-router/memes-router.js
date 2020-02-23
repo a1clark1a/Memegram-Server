@@ -111,13 +111,27 @@ memesRouter
         if (!updatedRows) {
           logger.error("updating went wrong");
           return res.status(400).json({
-            error: { message: "Bad Request" }
+            error: { message: "Unable to update" }
           });
         }
         logger.info(
           `Successfully added an upvote on the meme with ${memes_id} id`
         );
-        res.status(204);
+        res.status(204).end();
+      })
+      .catch(next);
+  })
+  .delete(jsonBodyParser, (req, res, next) => {
+    const knexInstance = req.app.get("db");
+    const { user_id } = req.body;
+    const { memes_id } = req.params;
+    console.log("user_id = ", user_id, "memes_id =", memes_id);
+    MemesService.deleteMemes(knexInstance, memes_id, user_id)
+      .then(() => {
+        logger.info(
+          `Successfully delete a meme with id ${memes_id} uploaded by user with id ${user_id}`
+        );
+        res.status(204).end();
       })
       .catch(next);
   });

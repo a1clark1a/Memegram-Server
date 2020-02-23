@@ -55,7 +55,12 @@ const MemesService = {
       .update(memesToUpdate);
   },
 
-  deleteMemes(knex, memesId) {},
+  deleteMemes(knex, memesId, userId) {
+    return knex("memes_tables")
+      .where({ id: memesId, user_id: userId })
+      .first()
+      .delete();
+  },
 
   sanitizedMemes(memes) {
     return {
