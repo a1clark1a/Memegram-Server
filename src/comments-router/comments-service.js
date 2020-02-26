@@ -22,16 +22,6 @@ const CommentsService = {
     return knex("memes_comments")
       .where({ commentsId })
       .delete();
-  },
-
-  sanitizeComment(comment) {
-    return {
-      id: comment.id,
-      comment: xss(comment.comment),
-      date_created: new Date(comment.date_created).toLocaleString(),
-      memes_id: comment.memes_id,
-      user_id: comment.user_id
-    };
   }
 };
 

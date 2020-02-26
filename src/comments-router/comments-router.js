@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const logger = require("../logger/logger");
 const CommentsService = require("./comments-service");
+const MemesService = require("../memes-router/memes-service");
 const { requireAuth } = require("../middleware/jwt-auth");
 
 const commentsRouter = express.Router();
@@ -36,7 +37,7 @@ commentsRouter
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${comment.id}`))
-          .json(CommentsService.sanitizeComment(comment));
+          .json(MemesService.sanitizedComments(comment));
       })
       .catch(next);
 
