@@ -58,6 +58,7 @@ const MemesService = {
       )
       .leftJoin("memes_users AS usr", "com.user_id", "usr.id")
       .where("com.memes_id", memesId);
+      .orderBy("com.date_created", "asc")
   },
 
   getMemesPoster(knex, userId) {
