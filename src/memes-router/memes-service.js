@@ -35,6 +35,7 @@ const MemesService = {
         "memes.id",
         "memes.title",
         "memes.url",
+        "memes.description",
         "memes.upvote_count",
         "memes.downvote_count",
         "memes.user_id",
