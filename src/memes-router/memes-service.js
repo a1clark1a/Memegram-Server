@@ -39,6 +39,7 @@ const MemesService = {
         "memes.upvote_count",
         "memes.downvote_count",
         "memes.user_id",
+        "memes.date_created",
         ...userFields
       )
       .leftJoin("memes_users AS usr", "memes.user_id", "usr.id")

@@ -24,13 +24,23 @@ describe(`Protected Endpoints`, () => {
     helpers.seedMemesTables(db, testUsers, testMemes, testComments)
   );
 
+  //TESTING FOR `USER MUST BE LOGGED IN REQUIRED` REQUESTS
   const protectedEndpoints = [
     {
       name: "Post /api/comments",
       path: "/api/comments",
       method: supertest(app).post
+    },
+    {
+      name: "Post /api/memes",
+      path: "/api/memes",
+      method: supertest(app).post
+    },
+    {
+      name: "Get /api/users/:user_id",
+      path: "/api/users/1",
+      method: supertest(app).get
     }
-    //TODO a path for getting profile accounts
   ];
 
   protectedEndpoints.forEach(endpoint => {

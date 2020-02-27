@@ -2,8 +2,6 @@ const knex = require("knex");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-//TODO make test memes table
-
 function makeMemesArray(users) {
   return [
     {
@@ -162,7 +160,8 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 250,
       downvote_count: 10,
-      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString(),
+      user: {}
     },
     {
       id: 2,
@@ -172,7 +171,8 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 150,
       downvote_count: 20,
-      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString(),
+      user: {}
     },
     {
       id: 3,
@@ -182,7 +182,8 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 230,
       downvote_count: 30,
-      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString(),
+      user: {}
     },
     {
       id: 4,
@@ -192,7 +193,8 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 450,
       downvote_count: 40,
-      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString(),
+      user: {}
     },
     {
       id: 5,
@@ -202,7 +204,8 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 50,
       downvote_count: 50,
-      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString(),
+      user: {}
     },
     {
       id: 6,
@@ -212,7 +215,8 @@ function makeExpectedMemesArray(users) {
       url: "https://i.picsum.photos/id/1/5616/3744.jpg",
       upvote_count: 60,
       downvote_count: 610,
-      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString()
+      date_created: new Date("2029-01-22T16:28:32.615Z").toLocaleString(),
+      user: {}
     }
   ];
 }
@@ -283,6 +287,54 @@ function makeExpectedUsersArray() {
   ];
 }
 
+//HELPER FUNCTION FOR XSS TESTING
+function makeExpectedMemes(users, memes, comments = []) {
+  const user = users.find(user => user.id === memes.user_id);
+
+  //TODO TEST NUMBER OF COMMENTS IN A MEME
+  const memesComment = comments.filter(
+    comment => comment.memes_id === memes.id
+  );
+
+  return {
+    id: memes.id,
+    url: memes.url,
+    title: memes.title,
+    description: memes.description,
+    upvote_count: memes.upvote_count,
+    downvote_count: memes.downvote_count,
+    date_created: memes.date_created,
+    user_id: memes.user_id,
+    user: {
+      id: user.id,
+      user_name: user.user_name,
+      full_name: user.full_name,
+      date_created: user.date_created
+    }
+  };
+}
+
+function makeMaliciousMeme(user) {
+  const maliciousMeme = {
+    id: 666,
+    url: "http://placehold.it/500x500",
+    date_created: new Date().toLocaleString(),
+    title: 'BAD TITLE BAD! <script>alert("xss");</script>',
+    user_id: user.id,
+    description: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`
+  };
+  const expectedMemeForMalic = {
+    ...makeExpectedMemes([user], maliciousMeme),
+    title: 'BAD TITLE BAD! &lt;script&gt;alert("xss");&lt;/script&gt;',
+    description: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`
+  };
+
+  return {
+    maliciousMeme,
+    expectedMemeForMalic
+  };
+}
+
 function seedUsers(db, users) {
   const preppedUsers = users.map(user => ({
     ...user,
@@ -306,6 +358,12 @@ function seedMemesTables(db, users, memes, comments = []) {
     await trx.raw(`SELECT setval('memes_tables_id_seq', ?)`, [
       memes[memes.length - 1].id
     ]);
+  });
+}
+
+function seedMaliciousMeme(db, user, meme) {
+  return seedUsers(db, [user]).then(() => {
+    return db.into("memes_tables").insert([meme]);
   });
 }
 
@@ -342,7 +400,8 @@ module.exports = {
   makeMemesArray,
   makeCommentsArray,
 
-  makeExpectedUsersArray,
+  makeExpectedMemesArray,
+  makeExpectedMemes,
   makeExpectedCommentsArray,
   makeExpectedUsersArray,
 
@@ -351,5 +410,8 @@ module.exports = {
   makeAuthHeader,
 
   seedUsers,
-  seedMemesTables
+  seedMemesTables,
+
+  makeMaliciousMeme,
+  seedMaliciousMeme
 };

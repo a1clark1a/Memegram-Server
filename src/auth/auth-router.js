@@ -28,7 +28,7 @@ authRouter.post("/login", jsonBodyParser, (req, res, next) => {
       if (!dbUser) {
         logger.error("error retreiving dbuser");
         return res.status(400).json({
-          error: { message: `Incorrect user_name or password` }
+          error: { message: `Incorrect User name or password` }
         });
       }
       //VALIDATE password to check with hashed password
@@ -38,7 +38,7 @@ authRouter.post("/login", jsonBodyParser, (req, res, next) => {
       ).then(compareMatch => {
         if (!compareMatch) {
           return res.status(400).json({
-            error: { message: `Incorrect user_name or password` }
+            error: { message: `Incorrect User name or password` }
           });
         }
         //CREATE JWT

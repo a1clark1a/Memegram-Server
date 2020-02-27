@@ -40,10 +40,7 @@ commentsRouter
           .json(MemesService.sanitizedComments(comment));
       })
       .catch(next);
-
-    //TODO GET
     //TODO DELETE
-    //TODO PATCH
   });
 
 module.exports = commentsRouter;

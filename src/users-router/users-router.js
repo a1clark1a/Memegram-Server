@@ -4,6 +4,7 @@ const logger = require("../logger/logger");
 const UsersService = require("./users-service");
 const AuthService = require("../auth/auth-service");
 const MemesService = require("../memes-router/memes-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -22,6 +23,7 @@ usersRouter.route("/").get((req, res, next) => {
 
 usersRouter
   .route("/:user_name")
+  .all(requireAuth)
   .all((req, res, next) => {
     const knexInstance = req.app.get("db");
     const { user_name } = req.params;

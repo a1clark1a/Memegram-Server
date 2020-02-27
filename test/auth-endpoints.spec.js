@@ -22,6 +22,7 @@ describe("Auth Endpoints", function() {
 
   afterEach("clean the tables", () => helpers.cleanTables(db));
 
+  //TESTING LOG IN ENDPOINT
   describe(`POST /api/auth/login`, () => {
     beforeEach(`insert users`, () => {
       return helpers.seedUsers(db, testUsers);
@@ -59,7 +60,7 @@ describe("Auth Endpoints", function() {
         .post("/api/auth/login")
         .send(userInvalidUser)
         .expect(400, {
-          error: { message: `Incorrect user_name or password` }
+          error: { message: `Incorrect User name or password` }
         });
     });
 
@@ -73,7 +74,7 @@ describe("Auth Endpoints", function() {
         .post("/api/auth/login")
         .send(userInvalidPass)
         .expect(400, {
-          error: { message: `Incorrect user_name or password` }
+          error: { message: `Incorrect User name or password` }
         });
     });
 
@@ -96,7 +97,8 @@ describe("Auth Endpoints", function() {
         .post("/api/auth/login")
         .send(userValidCreds)
         .expect(200, {
-          authToken: expectedToken
+          authToken: expectedToken,
+          user_name: testUser.user_name
         });
     });
   });

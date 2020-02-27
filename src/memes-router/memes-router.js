@@ -3,6 +3,7 @@ const path = require("path");
 const logger = require("../logger/logger");
 const MemesService = require("./memes-service");
 const UsersService = require("../users-router/users-service");
+const { requireAuth } = require("../middleware/jwt-auth");
 
 const memesRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -18,9 +19,8 @@ memesRouter
         res.json(memes.map(MemesService.sanitizedMemes));
       })
       .catch(next);
-    //TODO POST
   })
-  .post(jsonBodyParser, (req, res, next) => {
+  .post(requireAuth, jsonBodyParser, (req, res, next) => {
     const { title, description, user_id, url } = req.body;
     const newMeme = { title, description, user_id, url };
     const knexInstance = req.app.get("db");
@@ -30,7 +30,7 @@ memesRouter
         logger.error(`Missing ${key} in request body`);
         return res.status(400).json({
           error: {
-            message: `Request body must have a title, description, user_id and url`
+            message: `Uploading a Meme requires a Title, Description and URL and User Id`
           }
         });
       }
@@ -125,7 +125,6 @@ memesRouter
     const knexInstance = req.app.get("db");
     const { user_id } = req.body;
     const { memes_id } = req.params;
-    console.log("user_id = ", user_id, "memes_id =", memes_id);
     MemesService.deleteMemes(knexInstance, memes_id, user_id)
       .then(() => {
         logger.info(
@@ -135,8 +134,6 @@ memesRouter
       })
       .catch(next);
   });
-
-//TODO DELETE
 
 //API CALL FOR COMMENTS FOR EACH MEMES
 memesRouter.route("/:memes_id/comments").get((req, res, next) => {
@@ -161,5 +158,7 @@ memesRouter.route("/:user_id/users").get((req, res, next) => {
     })
     .catch(next);
 });
+
+//TODO GET COMMENT COUNT FOR EACH IMAGE
 
 module.exports = memesRouter;
