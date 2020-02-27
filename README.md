@@ -1,26 +1,68 @@
-# Express Boilerplate!
+# Memegram - Server API
 
-This is a boilerplate project used for starting new projects!
+## LIVE APP:
 
-## Set up
+- Memegram-Client = https://memegram.now.sh/
+- Memegram-API_Endpoint = https://thawing-mesa-40257.herokuapp.com/api
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+## Summary
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+- A Node.js, Express and PostreSQL server API that handles CRUD requests for the memegram app. This server utilizes RESTful API architecture, mocha, chai and supertest endpoints testing and validation, JWT and bcryptjs hashing authentication, XSS cross-site scripting sanitation, and Knex library for query building and database management.
 
-## Scripts
+## Tech Stack
 
-Start the application `npm start`
+- JavaScript ES6
+- Node.js
+- Express
+- Mocha, Chai and Supertest
+- PostgreSQL
+- Morgan and Winston logger
+- Knex
+- XSS
+- bcryptjs
+- jsonwebtoken
+- Treeize
 
-Start nodemon for the application `npm run dev`
+## API-ENDPOINTS
 
-Run the tests `npm test`
+### memes
 
-## Deploying
+- `/GET /api/memes`
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+- `/GET /api/memes/:memes_id`
+
+- `/GET /api/memes/:memes_id/comments`
+
+- `/GET /api/memes/:user_id/users`
+
+- `/POST /api/memes` - Request body needs a title, description, user_id, url parameter
+
+- `/DELETE /api/memes/:memes_id`
+
+- `/PATCH /api/memes/:memes_id` (Not fully implemented)
+
+### users
+
+- `/GET /api/users` - (In development for Admin user feature)
+
+- `/GET /api/users/:user_id`
+
+- `/GET /api/users/:user_id/memes"`
+
+- `/POST /api/users` - Request body needs a password, user_name, full_name
+
+- `/DELETE /api/users/:user_id` (In development for Admin user feature)
+
+### comments
+
+- `/POST /api/comments`
+
+- `/DE:ETE /api/comments/:comments_id` (In development for deleting a user-made comment)
+
+## In Development
+
+- Connect to an Image Hosting sight for uploading image files.
+- Delete a comment endpoints
+- updating images/comments/users endpoints
+- Adding columns and relation to tables in DB for categories/tags feature
+- Delete a user account endpoints
